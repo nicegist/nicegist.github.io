@@ -69,6 +69,20 @@ var externalLinks = function() {
     }
 };
 
+var internalLinks = function() {
+    for(var c = document.getElementsByTagName("a"), a = 0; a < c.length; a++) {
+        var b = c[a];
+        if (b.getAttribute("href") && b.getAttribute("href")[0] === '#' && b.getAttribute("class") !== 'header-anchor') {
+            b.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (e.target.hash) {
+                    scrollTo(e.target.hash);
+                }
+            });
+        }
+    }
+};
+
 var hideLoadingIndicator = function() {
     document.querySelector('#loadingIndicator').style.display = 'none';
 };
@@ -127,6 +141,20 @@ var jankyScrollTo = function(element, to, duration) {
         if (element.scrollTop === to) return;
         jankyScrollTo(element, to, duration - 10);
     }, 10);
+};
+
+var isIE = /Trident|MSIE/.test(navigator.userAgent);
+
+var scrollTo = function(elemSelector) {
+    var elem = document.querySelector(elemSelector);
+    if (elem) {
+        if (!isIE) {
+            smoothScrollTo(elem);
+        } else {
+            var root = document.documentElement || document.body;
+            jankyScrollTo(root, elem.offsetTop, 600);
+        }
+    }
 };
 
 var loadGist = function(gistId) {
@@ -200,17 +228,13 @@ var loadGist = function(gistId) {
                     // open external links in new tab
                     externalLinks();
 
+                    // attach smooth scrolling to internal anchor links
+                    internalLinks();
+
                     // smooth-scroll to anchor
                     if (location.hash.length) {
                         setTimeout(function() {
-                            var elem = document.getElementById(location.hash.substring(1));
-                            var isIE = /Trident|MSIE/.test(navigator.userAgent);
-                            if (!isIE) {
-                                smoothScrollTo(elem);
-                            } else {
-                                var root = document.documentElement || document.body;
-                                jankyScrollTo(root, elem.offsetTop, 600);
-                            }
+                            scrollTo(location.hash);
                         }, 200);
                     }
                 } else {
