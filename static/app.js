@@ -62,23 +62,21 @@
     window.GithubApi = GithubApi;
 })(window);
 
-var externalLinks = function() {
+var handleLinks = function() {
     for(var c = document.getElementsByTagName("a"), a = 0; a < c.length; a++) {
         var b = c[a];
-        b.getAttribute("href") && b.hostname !== location.hostname && (b.target = "_blank");
-    }
-};
-
-var internalLinks = function() {
-    for(var c = document.getElementsByTagName("a"), a = 0; a < c.length; a++) {
-        var b = c[a];
-        if (b.getAttribute("href") && b.getAttribute("href")[0] === '#' && b.getAttribute("class") !== 'header-anchor') {
+        if (b.getAttribute("href") && b.getAttribute("href")[0] === '#') {
+            // attach smooth scrooling to internal anchor links
             b.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (e.target.hash) {
                     scrollTo(e.target.hash);
+                    history.pushState(null, null, e.target.hash);
                 }
             });
+        } else if (b.getAttribute("href") && b.hostname !== location.hostname) {
+            // open external links in new tab
+            b.target = "_blank";
         }
     }
 };
@@ -225,11 +223,9 @@ var loadGist = function(gistId) {
                         } catch(e) {}
                     }
 
-                    // open external links in new tab
-                    externalLinks();
-
+                    // open external links in new tab and
                     // attach smooth scrolling to internal anchor links
-                    internalLinks();
+                    handleLinks();
 
                     // smooth-scroll to anchor
                     if (location.hash.length) {
@@ -280,3 +276,9 @@ var $titleHolder = document.querySelector('#titleHolder'),
 
     init(gistId);
 })();
+
+function locationHashChanged() {
+    scrollTo(location.hash);
+}
+
+window.onhashchange = locationHashChanged;
