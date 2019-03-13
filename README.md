@@ -28,20 +28,20 @@ I liked the idea. Thus, _Nicegist_ was born.
 
 **Bookmarklet:**
 
-Be lazy and drag the [Nicegist bookmarklet](https://gist.githubusercontent.com/eyecatchup/7442b083383908d7c925981ff082fea7/raw/7bcb67f301d71a0c1435629822845a4ac12605a0/nicegist-bookmarklet.js) to your bookmarks bar.  
+Be lazy and drag the [Nicegist bookmarklet](https://gist.githubusercontent.com/eyecatchup/7442b083383908d7c925981ff082fea7/raw/84f70d3cef6c5442b8898824fd69dc545352191f/nicegist-bookmarklet.js) to your bookmarks bar.  
 Click it when you’re on a gist page, and it will take you to the corresponding Nicegist page.
 
 ```js
-javascript:(function(){if(location.hostname==="gist.github.com"){var gistId=location.pathname.split("/").pop();if(location.pathname.split("/").length>2&&gistId.length)location.href="https://eyecatchup.github.io/nicegist/?id="+gistId}})();
+javascript:(function(){if(location.hostname==="gist.github.com"){var gistId=location.pathname.split("/").pop();if(location.pathname.split("/").length>2&&gistId.length)location.href="https://nicegist.github.io/"+gistId}})();
 ```
 
 **Examples:**
 
-- Code blocks: [Nicegist](https://eyecatchup.github.io/nicegist/?id=2f35faad4d4fa55810422283f7bc3b78), [Source](https://gist.github.com/eyecatchup/2f35faad4d4fa55810422283f7bc3b78)
-- Tables: [Nicegist](https://eyecatchup.github.io/nicegist/?id=79b95b862ca276c0748c9bab90a758e0), [Source](https://gist.github.com/eyecatchup/79b95b862ca276c0748c9bab90a758e0)
-- 💥 Embedded gists: [Nicegist](https://eyecatchup.github.io/nicegist/?id=3382937), [Source](https://gist.github.com/surma/3382937)
-- Text formatting, images & more: [Nicegist](https://eyecatchup.github.io/nicegist/?id=96e67c2dd38419b200f9efcd56c2e8e3), [Source](https://gist.github.com/eyecatchup/96e67c2dd38419b200f9efcd56c2e8e3)
-- Example writeup: [Nicegist](https://eyecatchup.github.io/nicegist/?id=dab5cf7977008e504213), [Source](https://gist.github.com/eyecatchup/dab5cf7977008e504213)
+- Code blocks: [Nicegist](https://nicegist.github.io/2f35faad4d4fa55810422283f7bc3b78), [Source](https://gist.github.com/eyecatchup/2f35faad4d4fa55810422283f7bc3b78)
+- Tables: [Nicegist](https://nicegist.github.io/79b95b862ca276c0748c9bab90a758e0), [Source](https://gist.github.com/eyecatchup/79b95b862ca276c0748c9bab90a758e0)
+- 💥 Embedded gists: [Nicegist](https://nicegist.github.io/3382937), [Source](https://gist.github.com/surma/3382937)
+- Text formatting, images & more: [Nicegist](https://nicegist.github.io/96e67c2dd38419b200f9efcd56c2e8e3), [Source](https://gist.github.com/eyecatchup/96e67c2dd38419b200f9efcd56c2e8e3)
+- Example writeup: [Nicegist](https://nicegist.github.io/dab5cf7977008e504213), [Source](https://gist.github.com/eyecatchup/dab5cf7977008e504213)
 
 ## Under the hood
 
