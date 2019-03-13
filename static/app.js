@@ -249,7 +249,7 @@ var $titleHolder = document.querySelector('#titleHolder'),
 
     if (redirect && redirect !== location.href) {
         history.replaceState(null, null, redirect);
-        gistId = redirect.split('/').pop(); // redirected via 404 page hack
+        gistId = redirect.split('/').pop().split('#', 1); // redirected via 404 page hack
     } else {
         gistId = parseQueryString['id']; // direct entry
     }
