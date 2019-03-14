@@ -70,7 +70,10 @@ var handleLinks = function() {
     for(var c = document.getElementsByTagName("a"), i = 0; i < c.length; i++) {
         var a = c[i];
         var href = a.getAttribute("href");
-        if (href && href[0] === '#') {
+        if (href && a.hostname !== location.hostname) {
+            // open external links in new tab
+            a.target = "_blank";
+        } else if (href && href[0] === '#') {
             // attach smooth scrooling to internal anchor links
             a.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -79,9 +82,6 @@ var handleLinks = function() {
                     history.pushState(null, null, e.target.hash);
                 }
             });
-        } else if (href && a.hostname !== location.hostname) {
-            // open external links in new tab
-            a.target = "_blank";
         }
     }
 };
@@ -184,6 +184,29 @@ var getCommentHTML = function(comment, renderedMarkdown) {
             </div>`;
 };
 
+var finish = function() {
+    // add syntax highlighting to code blocks
+    var codeBlocks = document.querySelectorAll('pre');
+    for (var c in codeBlocks) {
+        try {
+            hljs.highlightBlock(codeBlocks[c]);
+        } catch(e) {}
+    }
+
+    // open external links in new tab and
+    // attach smooth scrolling to internal anchor links
+    setTimeout(function() {
+        handleLinks();
+    }, 200);
+
+    // smooth-scroll to anchor
+    if (location.hash.length) {
+        setTimeout(function() {
+            scrollToElem(location.hash);
+        }, 500);
+    }
+};
+
 var loadGist = function(gistId) {
     GithubApi.getGist(gistId, function(gist) {
         if (gist) {
@@ -267,31 +290,14 @@ var loadGist = function(gistId) {
                                 }
                                 document.querySelector('#gist-comments').style.display = 'block';
                                 document.querySelector('#gist-comments').innerHTML = commentsHTML;
+                                finish();
                             }
                         }, function(error) {
                             console.warn(error);
+                            finish();
                         });
-                    }
-
-                    // add syntax highlighting to code blocks
-                    var codeBlocks = document.querySelectorAll('pre');
-                    for (var c in codeBlocks) {
-                        try {
-                            hljs.highlightBlock(codeBlocks[c]);
-                        } catch(e) {}
-                    }
-
-                    // open external links in new tab and
-                    // attach smooth scrolling to internal anchor links
-                    setTimeout(function() {
-                        handleLinks();
-                    }, 200);
-
-                    // smooth-scroll to anchor
-                    if (location.hash.length) {
-                        setTimeout(function() {
-                            scrollToElem(location.hash);
-                        }, 500);
+                    } else {
+                        finish();
                     }
                 } else {
                     $contentHolder.textContent = 'No markdown files attached to gist ' + gistId;
