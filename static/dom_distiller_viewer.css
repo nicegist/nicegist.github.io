@@ -401,8 +401,15 @@ h6:hover .header-anchor {
     }
 }
 
-/** RST styles **/
+#authorHolder {
+    margin: 5px 16px;
+    display: none;
+    font-style: italic;
+    color: #aaa;
+}
 
-pre.rst-literal-block span.rst-text {
-    display: block;
+#authorHolder a,
+#authorHolder a:visited {
+    color: #aaa !important;
+    text-decoration: underline;
 }

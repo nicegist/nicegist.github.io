@@ -56,6 +56,10 @@
         getGist: function(gistId, success, failure) {
             var url = '/gists/' + gistId;
             this.get(url, success, failure);
+        },
+        getGistComments: function(gistId, success, failure) {
+            var url = '/gists/' + gistId + '/comments';
+            this.get(url, success, failure);
         }
     };
 
@@ -70,7 +74,7 @@ var handleLinks = function() {
             b.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (e.target.hash) {
-                    scrollTo(e.target.hash);
+                    scrollToElem(e.target.hash);
                     history.pushState(null, null, e.target.hash);
                 }
             });
@@ -141,9 +145,7 @@ var jankyScrollTo = function(element, to, duration) {
     }, 10);
 };
 
-var isIE = /Trident|MSIE/.test(navigator.userAgent);
-
-var scrollTo = function(elemSelector) {
+var scrollToElem = function(elemSelector) {
     var elem = document.querySelector(elemSelector);
     if (elem) {
         if (!isIE) {
@@ -153,6 +155,12 @@ var scrollTo = function(elemSelector) {
             jankyScrollTo(root, elem.offsetTop, 600);
         }
     }
+};
+
+var addAuthor = function(gist) {
+    document.querySelector('#gistAuthor').innerHTML = '<a href="' + gist.owner.html_url + '">@' + gist.owner.login + '</a>';
+    document.querySelector('#gistPubDate').textContent = gist.created_at;
+    document.querySelector('#authorHolder').style.display = 'block';
 };
 
 var loadGist = function(gistId) {
@@ -210,8 +218,24 @@ var loadGist = function(gistId) {
                     // write gist content
                     $contentHolder.innerHTML = html;
 
+                    // add author details
+                    if (!isHomepage) {
+                        addAuthor(gist);
+                    }
+
                     // add link to gist comment section, if we have comments
-                    if (gist.comments > 0) {
+                    if (!isHomepage && gist.comments > 0) {
+                        // var commentsHTML = '';
+                        // GithubApi.getGistComments(gistId, function(comments) {
+                        //     if (comments && comments.length) {
+                        //         for (var m in comments) {
+                        //             var commentHTML = md.render(comments[m].body);
+                        //             console.log(commentHTML);
+                        //         }
+                        //     }
+                        // }, function(error) {
+                        //     console.warn(error);
+                        // });
                         document.querySelector('#gistComments').innerHTML = '<a target="_blank" href="https://gist.github.com/' + gistId + '#comments">' + gist.comments + ' comments</a>';
                     }
 
@@ -230,7 +254,7 @@ var loadGist = function(gistId) {
                     // smooth-scroll to anchor
                     if (location.hash.length) {
                         setTimeout(function() {
-                            scrollTo(location.hash);
+                            scrollToElem(location.hash);
                         }, 200);
                     }
                 } else {
@@ -247,6 +271,7 @@ var loadGist = function(gistId) {
 
 var init = function(gistId) {
     if (typeof gistId === 'undefined' || gistId === '') {
+        isHomepage = true;
         loadGist('7442b083383908d7c925981ff082fea7');
         showFooter('footerIntro');
     } else {
@@ -257,6 +282,8 @@ var init = function(gistId) {
 
 var $titleHolder = document.querySelector('#titleHolder'),
     $contentHolder = document.querySelector('#gistContent'),
+    isIE = /Trident|MSIE/.test(navigator.userAgent),
+    isHomepage = false,
     gistId = '',
     files = {
         markdown: [],
@@ -277,8 +304,6 @@ var $titleHolder = document.querySelector('#titleHolder'),
     init(gistId);
 })();
 
-function locationHashChanged() {
-    scrollTo(location.hash);
-}
-
-window.onhashchange = locationHashChanged;
+window.onhashchange = function() {
+    scrollToElem(location.hash);
+};
