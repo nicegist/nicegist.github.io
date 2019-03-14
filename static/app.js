@@ -73,8 +73,6 @@ var handleLinks = function() {
             // attach smooth scrooling to internal anchor links
             b.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('click');
-                console.dir(e.target);
                 var elem = e.target.nodeName === 'A' ? e.target : e.target.parentNode;
                 if (elem.hash) {
                     scrollToElem(elem.hash);
