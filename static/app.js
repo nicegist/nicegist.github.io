@@ -67,21 +67,21 @@
 })(window);
 
 var handleLinks = function() {
-    for(var c = document.getElementsByTagName("a"), i = 0; i < c.length; i++) {
-        var a = c[i];
-        var href = a.getAttribute("href");
-        if (href && a.hostname !== location.hostname) {
-            // open external links in new tab
-            a.target = "_blank";
-        } else if (href && href[0] === '#') {
+    for (var c = document.getElementsByTagName("a"), a = 0; a < c.length; a++) {
+        var b = c[a];
+        if (b.getAttribute("href") && b.hash && b.hash.length && b.hash[0] === '#' && b.hostname === location.hostname) {
             // attach smooth scrooling to internal anchor links
-            a.addEventListener('click', function(e) {
+            b.addEventListener('click', function(e) {
                 e.preventDefault();
-                if (e.target.hash) {
-                    scrollToElem(e.target.hash);
-                    history.pushState(null, null, e.target.hash);
+                var elem = e.target.nodeName === 'a' ? e.target : e.target.parentNode;
+                if (elem.hash) {
+                    scrollToElem(elem.hash);
+                    history.pushState(null, null, elem.hash);
                 }
             });
+        } else if (b.getAttribute("href") && b.hostname !== location.hostname) {
+            // open external links in new tab
+            b.target = "_blank";
         }
     }
 };
@@ -197,7 +197,7 @@ var finish = function() {
     // attach smooth scrolling to internal anchor links
     setTimeout(function() {
         handleLinks();
-    }, 200);
+    }, 500);
 
     // smooth-scroll to anchor
     if (location.hash.length) {
