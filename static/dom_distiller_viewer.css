@@ -229,7 +229,7 @@ video::-webkit-media-controls-fullscreen-button {
     width: 100%;
 }
 
-article > #gistContent, #gistComments, footer {
+article > #gistContent, #gist-comments, footer {
     margin: 24px 16px 24px 16px;
 }
 
@@ -361,7 +361,7 @@ img {
 footer {
     margin-top: 4em;
     margin-bottom: 2em;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #e1e4e8;
 }
 
 footer p {
@@ -401,6 +401,10 @@ h6:hover .header-anchor {
     }
 }
 
+article {
+    margin-bottom: 45px;
+}
+
 #authorHolder {
     margin: 5px 16px;
     display: none;
@@ -412,4 +416,80 @@ h6:hover .header-anchor {
 #authorHolder a:visited {
     color: #aaa !important;
     text-decoration: underline;
+}
+#gist-comments {
+    display: none;
+}
+#gist-comments[style*="block"] {
+    border-top: 1px solid #e1e4e8;
+}
+.comment-block {
+    border-top: 1px solid #e1e4e8;
+    padding: 15px 0;
+}
+.comment-block>.comment {
+    margin: 0;
+}
+.comment {
+    background: #fff;
+    border: 1px solid #d1d5da;
+    border-radius: 3px;
+    margin: 0 15px 15px;
+    overflow: hidden;
+    padding: 0;
+    white-space: normal;
+    word-break: break-word;
+    word-wrap: break-word;
+}
+.comment-block-title {
+    background-color: #fff;
+    border-bottom: 1px solid #e1e4e8;
+    color: #586069;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 10px 15px;
+    position: relative;
+}
+.comment-block-title:before,
+.comment-block-title:after {
+    content: "";
+    display: table;
+}
+.avatar {
+    border-radius: 3px;
+    display: inline-block;
+    line-height: 1;
+    overflow: hidden;
+    vertical-align: middle;
+    margin: 0;
+}
+.comment-block-title .avatar {
+    border-radius: 3px;
+    float: left;
+    margin-right: 10px;
+}
+.comment-block-title .username {
+    color: #444d56 !important;
+    font-weight: 600;
+}
+.comment-block-title .timestamp {
+    color: #586069 !important;
+}
+.comment-block-title a {
+    text-decoration: none;
+}
+.comment-block-meta {
+    margin-left: 42px;
+}
+.comment-block-comment {
+    padding: 15px;
+}
+.comment-body {
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+.comment-body:before,
+.comment-body:after {
+    content: "";
+    display: table;
 }

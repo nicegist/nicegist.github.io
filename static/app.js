@@ -159,8 +159,28 @@ var scrollToElem = function(elemSelector) {
 
 var addAuthor = function(gist) {
     document.querySelector('#gistAuthor').innerHTML = '<a href="' + gist.owner.html_url + '">@' + gist.owner.login + '</a>';
-    document.querySelector('#gistPubDate').textContent = gist.created_at;
+    document.querySelector('#gistPubDate').innerHTML = '<a href="' + gist.html_url + '">' + gist.created_at + '</a>';
     document.querySelector('#authorHolder').style.display = 'block';
+};
+
+var getCommentHTML = function(comment, renderedMarkdown) {
+    var username = comment.user === null ? 'ghost' : comment.user.login; // when a gist user was deleted, github uses a "ghost" label
+    var avatar = comment.user === null ? 'https://avatars3.githubusercontent.com/u/10137' : comment.user.avatar_url;
+    var commentUsername = comment.user === null ? `<span class="username">${username}</span>` : `<a href="${comment.user.html_url}" class="username">${username}</a>`;
+    return `<div class="comment-block">
+                <div class="comment" id="comment-${comment.id}">
+                    <div class="comment-block-title">
+                        <img class="avatar" height="32" width="32" alt="@${username}" src="${avatar}?s=88&amp;v=4">
+                        <div class="comment-block-meta">
+                            ${commentUsername}<br>
+                            commented at <a href="#comment-${comment.id}"><time class="timestamp" datetime="${comment.created_at}">${comment.created_at}</time></a>
+                        </div>
+                    </div>
+                    <div class="comment-block-comment">
+                        <div class="comment-body">${renderedMarkdown}</div>
+                    </div>
+                </div>
+            </div>`;
 };
 
 var loadGist = function(gistId) {
@@ -196,7 +216,16 @@ var loadGist = function(gistId) {
                         permalink: true,
                         permalinkClass: 'header-anchor',
                         permalinkSymbol: '¶',
-                        permalinkBefore: true
+                        permalinkBefore: true,
+                        slugify: function(str) {
+                            // use custom slugify function to fix several issues with anchor generation (special chars related)
+                            str = encodeURIComponent(String(str).trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g,"-"));
+                            if (/[0-9]/.test(str[0])) { // ids must not start with a number
+                                var x = str.split('-', 1);
+                                str = str.substring((x[0].length + 1));
+                            }
+                            return str;
+                        }
                     });
 
                     for (var i in files.markdown) {
@@ -223,20 +252,24 @@ var loadGist = function(gistId) {
                         addAuthor(gist);
                     }
 
-                    // add link to gist comment section, if we have comments
+                    // add gist comments, if we have
                     if (!isHomepage && gist.comments > 0) {
-                        // var commentsHTML = '';
-                        // GithubApi.getGistComments(gistId, function(comments) {
-                        //     if (comments && comments.length) {
-                        //         for (var m in comments) {
-                        //             var commentHTML = md.render(comments[m].body);
-                        //             console.log(commentHTML);
-                        //         }
-                        //     }
-                        // }, function(error) {
-                        //     console.warn(error);
-                        // });
-                        document.querySelector('#gistComments').innerHTML = '<a target="_blank" href="https://gist.github.com/' + gistId + '#comments">' + gist.comments + ' comments</a>';
+                        var hl = gist.comments > 1 ? gist.comments + ' Comments' : '1 Comment';
+                        var commentsHTML = '<h2><a class="header-anchor" href="#gist-comments" aria-hidden="true">¶</a>' + hl + '</h2>';
+                        commentsHTML += '<p><a target="_blank" href="' + gist.html_url + '#partial-timeline-marker">Add comment on Gist</a></p>'
+                        GithubApi.getGistComments(gistId, function(comments) {
+                            if (comments && comments.length) {
+                                // create a new instance, since we don't want to create anchor links within comments
+                                md = window.markdownit({linkify: true});
+                                for (var m in comments) {
+                                    commentsHTML += getCommentHTML(comments[m], md.render(comments[m].body));
+                                }
+                                document.querySelector('#gist-comments').style.display = 'block';
+                                document.querySelector('#gist-comments').innerHTML = commentsHTML;
+                            }
+                        }, function(error) {
+                            console.warn(error);
+                        });
                     }
 
                     // add syntax highlighting to code blocks
