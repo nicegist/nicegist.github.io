@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Nicegist</title>
+
+    <link rel='dns-prefetch' href='https://www.googletagmanager.com'>
+    <link rel='prefetch' href='https://www.googletagmanager.com/gtag/js'>
+
     <link rel="apple-touch-icon" sizes="57x57" href="/static/touch-icons/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/static/touch-icons/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/static/touch-icons/apple-icon-72x72.png">
@@ -56,6 +60,13 @@
             </footer>
         </div>
     </div>
-    <script src='./static/app.js' defer async></script>
+    <script src='./static/app.js' async defer></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src='https://www.googletagmanager.com/gtag/js?id=UA-57728344-3' async defer></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());gtag('config', 'UA-57728344-3');
+    </script>
 </body>
 </html>
