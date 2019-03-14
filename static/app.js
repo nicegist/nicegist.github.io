@@ -173,7 +173,7 @@ var getCommentHTML = function(comment, renderedMarkdown) {
                         <img class="avatar" height="32" width="32" alt="@${username}" src="${avatar}?s=88&amp;v=4">
                         <div class="comment-block-meta">
                             ${commentUsername}<br>
-                            commented at <a href="#comment-${comment.id}"><time class="timestamp" datetime="${comment.created_at}">${comment.created_at}</time></a>
+                            commented on <a href="#comment-${comment.id}"><time class="timestamp" datetime="${comment.created_at}">${comment.created_at}</time></a>
                         </div>
                     </div>
                     <div class="comment-block-comment">
