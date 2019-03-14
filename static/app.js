@@ -288,7 +288,7 @@ var loadGist = function(gistId) {
                     if (location.hash.length) {
                         setTimeout(function() {
                             scrollToElem(location.hash);
-                        }, 200);
+                        }, 500);
                     }
                 } else {
                     $contentHolder.textContent = 'No markdown files attached to gist ' + gistId;
