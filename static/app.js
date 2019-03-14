@@ -67,20 +67,21 @@
 })(window);
 
 var handleLinks = function() {
-    for(var c = document.getElementsByTagName("a"), a = 0; a < c.length; a++) {
-        var b = c[a];
-        if (b.getAttribute("href") && b.getAttribute("href")[0] === '#') {
+    for(var c = document.getElementsByTagName("a"), i = 0; i < c.length; i++) {
+        var a = c[i];
+        var href = a.getAttribute("href");
+        if (href && href[0] === '#') {
             // attach smooth scrooling to internal anchor links
-            b.addEventListener('click', function(e) {
+            a.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (e.target.hash) {
                     scrollToElem(e.target.hash);
                     history.pushState(null, null, e.target.hash);
                 }
             });
-        } else if (b.getAttribute("href") && b.hostname !== location.hostname) {
+        } else if (href && a.hostname !== location.hostname) {
             // open external links in new tab
-            b.target = "_blank";
+            a.target = "_blank";
         }
     }
 };
@@ -282,7 +283,9 @@ var loadGist = function(gistId) {
 
                     // open external links in new tab and
                     // attach smooth scrolling to internal anchor links
-                    handleLinks();
+                    setTimeout(function() {
+                        handleLinks();
+                    }, 200);
 
                     // smooth-scroll to anchor
                     if (location.hash.length) {
@@ -329,7 +332,7 @@ var $titleHolder = document.querySelector('#titleHolder'),
 
     if (redirect && redirect !== location.href) {
         history.replaceState(null, null, redirect);
-        gistId = redirect.split('/').pop().split('#', 1); // redirected via 404 page hack
+        gistId = redirect.split('/').pop().split('?', 1)[0].split('#', 1)[0]; // redirected via 404 page hack
     } else {
         gistId = parseQueryString['id']; // direct entry
     }
