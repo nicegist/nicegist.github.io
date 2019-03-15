@@ -22,8 +22,9 @@ I liked the idea. Thus, _Nicegist_ was born.
 
 ## Usage
 
-1. Create a gist on Github with one or more Markdown-syntax files.
-2. Note the gist ID. (It's usually a longish alpha-numeric string like `dab5cf7977008e504213`.)
+1. Create a [Gist on Github](https://gist.github.com/) with one or more [Markdown-syntax](https://daringfireball.net/projects/markdown/) files.
+2. Note the Gist ID at the end of the Gist URL.  
+_(It's a longish alpha-numberic string like `dab5cf7977008e504213`.)_
 3. View your writing presented nicely at `nicegist.github.io/YOUR_GIST_ID`
 
 ### Examples
@@ -31,12 +32,23 @@ I liked the idea. Thus, _Nicegist_ was born.
 - Code blocks: [Nicegist](https://nicegist.github.io/2f35faad4d4fa55810422283f7bc3b78), [Source](https://gist.github.com/eyecatchup/2f35faad4d4fa55810422283f7bc3b78)
 - Tables: [Nicegist](https://nicegist.github.io/79b95b862ca276c0748c9bab90a758e0), [Source](https://gist.github.com/eyecatchup/79b95b862ca276c0748c9bab90a758e0)
 - 💥 Embedded gists: [Nicegist](https://nicegist.github.io/3382937), [Source](https://gist.github.com/surma/3382937)
+- 💥 Embedded interactive map: [Nicegist](https://nicegist.github.io/39e869f768a34ae3e8c4b81f733bfe42), [Source](https://gist.github.com/eyecatchup/39e869f768a34ae3e8c4b81f733bfe42)
 - Text formatting, images & more: [Nicegist](https://nicegist.github.io/96e67c2dd38419b200f9efcd56c2e8e3), [Source](https://gist.github.com/eyecatchup/96e67c2dd38419b200f9efcd56c2e8e3)
 - Example writeup: [Nicegist](https://nicegist.github.io/dab5cf7977008e504213), [Source](https://gist.github.com/eyecatchup/dab5cf7977008e504213)
 
+### Content
+
+The Gist's description field will be used as the title for your writing. You should structure your writing such that the highest-level heading is an H2, as the post title will be a first-level heading. 
+
+Your Markdown file(s) can contain relative links to anchors, which _Nicegist_ will automatically create for each heading in your Markdown file(s).
+
+You can also embed other files from your Gist in your Markdown file(s). _Nicegist_ supports custom `<gist>` tags. Let's say your Gist contains two files. A `example.md` and a `code.sh`. You could then use the custom embed tag in your `example.md` as follows: `<gist>code.sh</gist>`. _Nicegist_ will render these tags like in [this example](https://nicegist.github.io/3382937).
+
+Check out the [examples](#examples) above for more clues on what you can and should do when writing for _Nicegist_. 
+
 ### Bookmarklet
 
-Be lazy and drag the [Nicegist bookmarklet](https://gist.githubusercontent.com/eyecatchup/7442b083383908d7c925981ff082fea7/raw/84f70d3cef6c5442b8898824fd69dc545352191f/nicegist-bookmarklet.js) to your bookmarks bar.  
+Be lazy and drag the [_Nicegist_ bookmarklet](https://gist.githubusercontent.com/eyecatchup/7442b083383908d7c925981ff082fea7/raw/84f70d3cef6c5442b8898824fd69dc545352191f/nicegist-bookmarklet.js) to your bookmarks bar.  
 Click it when you’re on a gist page, and it will take you to the corresponding Nicegist page.
 
 ```js
