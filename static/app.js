@@ -319,8 +319,12 @@ var loadGist = gistId => {
 
                     // add author details
                     if (!isHomepage) {
-                        $('#gistAuthor').innerHTML = `<a href="${gist.owner.html_url}">@${gist.owner.login}</a>`;
+                        var username = gist.owner === null ? 'ghost' : gist.owner.login; // when a gist user was deleted, github uses a "ghost" label
+                        var avatar = gist.owner === null ? 'https://avatars3.githubusercontent.com/u/10137' : gist.owner.avatar_url;
+                        var gistAuthor = gist.owner === null ? `<span class="username">${username}</span>` : `<a href="${gist.owner.html_url}" class="username">${username}</a>`;
+                        $('#gistAuthor').innerHTML = gistAuthor;
                         $('#gistPubDate').innerHTML = `<a href="${gist.html_url}">${gist.created_at}</a>`;
+                        $('#authorAvatar').innerHTML = `<img class="avatar" height="26" width="26" alt="@${username}" src="${avatar}?s=24&amp;v=4">`;
                         $('#authorHolder').style.display = 'block';
                     }
 
