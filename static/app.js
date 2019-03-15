@@ -2,7 +2,7 @@
     var GithubApi = {
         xhr: null,
         apiBaseUrl: 'https://api.github.com',
-        githubStatusApiUrl: 'https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json',
+        githubStatusApiUrl: 'https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json', // https://www.githubstatus.com/api
         getXMLHttpRequest: function() {
             if (!!window.XMLHttpRequest) {
                 this.xhr = new window.XMLHttpRequest;
@@ -17,11 +17,20 @@
         get: function(requestUrl, success, failure) {
             this.getXMLHttpRequest();
 
+            if (!this.xhr) {
+                window.console.log("AJAX (XMLHTTP) not supported by your client.");
+                failure({
+                    status: 'error',
+                    msg: 'AJAX (XMLHTTP) not supported by your client but required for Nicegist to work, sorry.'
+                });
+                return;
+            }
+
             var self = this.xhr;
 
             this.xhr.open('GET', requestUrl, true);
             this.xhr.setRequestHeader('Accept', 'application/json');
-            this.xhr.timeout = 1000; // time in milliseconds
+            this.xhr.timeout = 1500; // time in milliseconds
 
             self.onload = function() {
                 if (self.status >= 200 && self.status < 400) {
@@ -65,6 +74,15 @@
                                     });
                                 }
                             }
+                            failure({
+                                status: 'error',
+                                msg: 'API timeout error when fetching Gist.'
+                            });
+                        } else {
+                            failure({
+                                status: 'error',
+                                msg: 'API timeout error when fetching Gist.'
+                            });
                         }
                     }, error => {
                         failure({
@@ -83,12 +101,10 @@
             this.xhr.send();
         },
         getGist: function(gistId, success, failure) {
-            var endpoint = '/gists/' + gistId;
-            this.get(this.apiBaseUrl + endpoint, success, failure);
+            this.get(`${this.apiBaseUrl}/gists/${gistId}`, success, failure);
         },
         getGistComments: function(gistId, success, failure) {
-            var endpoint = '/gists/' + gistId + '/comments';
-            this.get(this.apiBaseUrl + endpoint, success, failure);
+            this.get(`${this.apiBaseUrl}/gists/${gistId}/comments`, success, failure);
         },
         getGithubApiStatus: function(success, failure) {
             this.get(this.githubStatusApiUrl, success, failure);
