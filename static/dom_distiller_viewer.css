@@ -406,7 +406,7 @@ article {
 }
 
 #authorHolder {
-    margin: 5px 16px;
+    margin: 8px 16px 30px;
     display: none;
     font-style: italic;
     color: #aaa;
@@ -417,6 +417,11 @@ article {
     color: #aaa !important;
     text-decoration: underline;
 }
+
+#authorAvatar {
+    display: inline-block;
+}
+
 #gist-comments {
     display: none;
 }
