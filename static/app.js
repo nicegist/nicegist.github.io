@@ -2,6 +2,7 @@
     var GithubApi = {
         xhr: null,
         apiBaseUrl: 'https://api.github.com',
+        githubStatusApiUrl: 'https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json',
         getXMLHttpRequest: function() {
             if (!!window.XMLHttpRequest) {
                 this.xhr = new window.XMLHttpRequest;
@@ -13,14 +14,14 @@
                 }
             }
         },
-        get: function(endpoint, success, failure) {
+        get: function(requestUrl, success, failure) {
             this.getXMLHttpRequest();
 
-            var self = this.xhr,
-                requestUrl = this.apiBaseUrl + endpoint;
+            var self = this.xhr;
 
             this.xhr.open('GET', requestUrl, true);
             this.xhr.setRequestHeader('Accept', 'application/json');
+            this.xhr.timeout = 1000; // time in milliseconds
 
             self.onload = function() {
                 if (self.status >= 200 && self.status < 400) {
@@ -37,23 +38,60 @@
                 else {
                     window.console.log('Error requesting ' + requestUrl +
                         '. Response Status-Code is ' + self.status);
-                    failure();
+                    failure({
+                        status: 'error',
+                        msg: 'Error when fetching Gist. Gist API returned a ' + self.status + ' response code.'
+                    });
                 }
             }
             self.onerror = function() {
                 window.console.log('There was an error (of some sort) connecting to ' + requestUrl);
-                failure();
+                failure({
+                    status: 'error',
+                    msg: 'Error when fetching Gist.'
+                });
+            };
+            self.ontimeout = _ => {
+                window.console.log('Connecting to ' + requestUrl + ' timed out');
+                if (requestUrl !== this.githubStatusApiUrl) {
+                    this.getGithubApiStatus(response => {
+                        if (response && response.components) {
+                            for (var i in response.components) {
+                                // brv1bkgrwx7q = id for "GitHub APIs" component
+                                if (response.components[i].id === 'brv1bkgrwx7q' && response.components[i].status !== 'operational') {
+                                    failure({
+                                        status: 'error',
+                                        msg: 'The GitHub API is currently not fully operational. Sorry, but nothing we can do right now.'
+                                    });
+                                }
+                            }
+                        }
+                    }, error => {
+                        failure({
+                            status: 'error',
+                            msg: 'API timeout error when fetching Gist.'
+                        });
+                    });
+                } else {
+                    failure({
+                        status: 'error',
+                        msg: 'API timeout error when fetching Gist AND when fetching the GitHub API status. Sorry, but nothing we can do right now.'
+                    });
+                }
             };
 
             this.xhr.send();
         },
         getGist: function(gistId, success, failure) {
-            var url = '/gists/' + gistId;
-            this.get(url, success, failure);
+            var endpoint = '/gists/' + gistId;
+            this.get(this.apiBaseUrl + endpoint, success, failure);
         },
         getGistComments: function(gistId, success, failure) {
-            var url = '/gists/' + gistId + '/comments';
-            this.get(url, success, failure);
+            var endpoint = '/gists/' + gistId + '/comments';
+            this.get(this.apiBaseUrl + endpoint, success, failure);
+        },
+        getGithubApiStatus: function(success, failure) {
+            this.get(this.githubStatusApiUrl, success, failure);
         }
     };
 
@@ -308,7 +346,7 @@ var loadGist = gistId => {
     }, error => {
         console.warn(error);
         hideLoadingIndicator();
-        $titleHolder.textContent = 'Error fetching gist.'
+        $titleHolder.textContent = error.msg;
     });
 };
 
