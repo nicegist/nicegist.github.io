@@ -332,7 +332,7 @@
                                 }
                             });
 
-                            this.files.markdown.map(file => {
+                            this.files.markdown.forEach(file => {
                                 html += md.render(file.content);
                             });
 
@@ -410,7 +410,7 @@
                 if (comments && comments.length) {
                     // create a new instance, since we don't want to create anchor links within comments
                     var md = window.markdownit({linkify: true});
-                    comments.map(comment => {
+                    comments.forEach(comment => {
                         commentsHTML += getCommentHTML(comment, md.render(comment.body));
                     });
                     $('#gist-comments').style.display = 'block';
