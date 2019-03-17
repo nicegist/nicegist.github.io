@@ -4,7 +4,7 @@
     /**
      * GitHub API wrapper
      */
-    var GithubApi = {
+    const GithubApi = {
         xhr: null,
         apiBaseUrl: 'https://api.github.com',
         githubStatusApiUrl: 'https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json', // https://www.githubstatus.com/api
@@ -31,46 +31,44 @@
                 return;
             }
 
-            var self = this.xhr;
+            const self = this.xhr;
 
             this.xhr.open('GET', requestUrl, true);
             this.xhr.setRequestHeader('Accept', 'application/json');
             this.xhr.timeout = 1500; // time in milliseconds
 
-            self.onload = function() {
+            self.onload = _ => {
                 if (self.status >= 200 && self.status < 400) {
-                    window.console.log('Successfully called ' + requestUrl);
+                    window.console.log(`Successfully called ${requestUrl}.`);
                     try {
                         var json = JSON.parse(self.responseText);
                     } catch (e) {
                         window.console.log('Error parsing response as JSON. Returning raw response data.');
                     }
 
-                    var response = !json ? self.responseText : json;
-                    success(response);
+                    success((!json ? self.responseText : json));
                 }
                 else {
-                    window.console.log('Error requesting ' + requestUrl +
-                        '. Response Status-Code is ' + self.status);
+                    window.console.log(`Error requesting ${requestUrl}. Response Status-Code is ${self.status}.`);
                     failure({
                         status: 'error',
-                        msg: 'Error when fetching Gist. Gist API returned a ' + self.status + ' response code.'
+                        msg: `Error when fetching Gist. Gist API returned a ${self.status} response code.`
                     });
                 }
             }
-            self.onerror = function() {
-                window.console.log('There was an error (of some sort) connecting to ' + requestUrl);
+            self.onerror = _ => {
+                window.console.log(`There was an error (of some sort) connecting to ${requestUrl}.`);
                 failure({
                     status: 'error',
                     msg: 'Error when fetching Gist.'
                 });
             };
             self.ontimeout = _ => {
-                window.console.log('Connecting to ' + requestUrl + ' timed out');
+                window.console.log(`Connection to ${requestUrl} timed out.`);
                 if (requestUrl !== this.githubStatusApiUrl) {
                     this.getGithubApiStatus(response => {
                         if (response && response.components) {
-                            for (var i in response.components) {
+                            for (let i in response.components) {
                                 // brv1bkgrwx7q = id for "GitHub APIs" component
                                 if (response.components[i].id === 'brv1bkgrwx7q' && response.components[i].status !== 'operational') {
                                     failure({
@@ -127,15 +125,18 @@
      */
 
     // querySelector shortcut
-    var $ = selector => {
+    const $ = selector => {
         return document.querySelector(selector);
     };
 
-    // simple IE user agent detection
-    var isIE = /Trident|MSIE/.test(window.navigator.userAgent);
+    // simple user agent detection
+    const UA = {
+        isSafari: /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification)),
+        isIE: /*@cc_on!@*/false || !!document.documentMode
+    };
 
-    // smooth anchor scrolling
-    var smoothScrollTo = elem => {
+    // smooth anchor scrolling for Chrome, Firefox & Opera
+    const smoothScrollTo = elem => {
         window.scroll({
             behavior: 'smooth',
             left: 0,
@@ -143,11 +144,11 @@
         });
     };
 
-    // not-so-smooth anchor scrolling for IE
-    var jankyScrollTo = (element, to, duration) => {
+    // not-so-smooth anchor scrolling for IE & Safari
+    const jankyScrollTo = (element, to, duration) => {
         if (duration <= 0) return;
-        var difference = to - element.scrollTop;
-        var perTick = difference / duration * 10;
+        let difference = to - element.scrollTop;
+        let perTick = difference / duration * 10;
 
         setTimeout(_ => {
             element.scrollTop = element.scrollTop + perTick;
@@ -157,17 +158,20 @@
     };
 
     // smooth scrolling stub
-    var scrollToElem = elemSelector => {
+    const scrollToElem = elemSelector => {
         if (!elemSelector) {
             return;
         }
 
-        var elem = $(elemSelector);
+        let elem = $(elemSelector);
         if (elem) {
-            if (!isIE) {
+            if (!UA.isIE && !UA.isSafari) {
                 smoothScrollTo(elem);
             } else {
-                jankyScrollTo(document.documentElement, elem.offsetTop, 600);
+                // when scrolling the content, safari scrolls on the body element
+                // whereas IE scrolls on the html element
+                const root = UA.isSafari ? document.body : document.documentElement;
+                jankyScrollTo(root, elem.offsetTop, 600);
             }
         }
     };
@@ -175,7 +179,7 @@
     /**
      * Nicegist
      */
-    var Nicegist = {
+    const Nicegist = {
         gist: null,
         files: {
             markdown: [],
@@ -183,10 +187,10 @@
         },
         isHomepage: false,
         init: function() {
-            var gistId = '';
+            let gistId = '';
 
             // get the gist id
-            var redirect = window.sessionStorage.redirect;
+            const redirect = window.sessionStorage.redirect;
             delete window.sessionStorage.redirect;
 
             if (redirect && redirect !== window.location.href) {
@@ -195,10 +199,10 @@
                 gistId = redirect.split('/').pop().split('?', 1)[0].split('#', 1)[0];
             } else {
                 // direct entry
-                var parseQueryString = (pairList => {
-                    var pairs = {};
-                    for (var i = 0; i < pairList.length; ++i) {
-                        var keyValue = pairList[i].split('=', 2);
+                const parsedQueryString = (pairList => {
+                    const pairs = {};
+                    for (let i = 0; i < pairList.length; ++i) {
+                        const keyValue = pairList[i].split('=', 2);
                         if (keyValue.length == 1) {
                             pairs[keyValue[0]] = '';
                         } else {
@@ -208,7 +212,7 @@
                     return pairs;
                 })(window.location.search.substr(1).split('&'));
 
-                gistId = parseQueryString['id'];
+                gistId = parsedQueryString.id;
             }
 
             if (typeof gistId === 'undefined' || gistId === '') {
@@ -222,8 +226,8 @@
         },
         finish: function() {
             // add syntax highlighting to code blocks
-            var codeBlocks = document.querySelectorAll('pre');
-            for (var c in codeBlocks) {
+            const codeBlocks = document.querySelectorAll('pre');
+            for (let c in codeBlocks) {
                 try {
                     hljs.highlightBlock(codeBlocks[c]);
                 } catch(e) {}
@@ -231,13 +235,13 @@
 
             // open external links in new tab and
             // attach smooth scrolling to internal anchor links
-            setTimeout(function() {
-                for (var c = document.getElementsByTagName('a'), i = 0; i < c.length; i++) {
-                    var a = c[i];
+            setTimeout(_ => {
+                for (let c = document.getElementsByTagName('a'), i = 0; i < c.length; i++) {
+                    const a = c[i];
                     if (a.getAttribute('href') && a.hash && a.hash.length && a.hash[0] === '#' && a.hostname === window.location.hostname) {
                         a.addEventListener('click', function(e) {
                             e.preventDefault();
-                            var elem = e.target.nodeName === 'A' ? e.target : e.target.parentNode;
+                            const elem = e.target.nodeName === 'A' ? e.target : e.target.parentNode;
                             if (elem.hash) {
                                 scrollToElem(elem.hash);
                                 window.history.pushState(null, null, elem.hash);
@@ -251,22 +255,25 @@
 
             // smooth-scroll to anchor, if present in request URL
             if (window.location.hash.length) {
-                setTimeout(_ => {scrollToElem(window.location.hash)}, 500);
+                setTimeout(scrollToElem(window.location.hash), 500);
             }
         },
         loadGist: function(gistId) {
-            var $titleHolder =  $('#titleHolder'),
-                $contentHolder = $('#gistContent');
+            const $titleHolder =  $('#titleHolder');
+            const $contentHolder = $('#gistContent');
 
-            var hideLoadingIndicator = _ => {
+            const hideLoadingIndicator = _ => {
                 $('#loadingIndicator').style.display = 'none';
             };
 
-            var getIframeHeight = filename => {
-                for (var i in this.files.others) {
+            // Since we can not access the iframe to get its scroll height (cross origin),
+            // we calculate the height by counting the lines in the embedded gist.
+            // Ugly, but works (mostly) reliable.
+            const getIframeHeight = filename => {
+                for (let i in this.files.others) {
                     if (this.files.others[i].filename === filename) {
-                        var matches = this.files.others[i].content.match(/\n/g);
-                        var lines = ((matches && matches.length) ? matches.length : 0) + 1;
+                        const matches = this.files.others[i].content.match(/\n/g);
+                        const lines = ((matches && matches.length) ? matches.length : 0) + 1;
                         // 22px = line height in embedded gists (with .pibb extension)
                         // 40px = embedded gists footer height
                         // 3px = cumulated border height for embedded gists
@@ -277,6 +284,7 @@
                 return false;
             };
 
+            // (try to) load the given gist from the GitHub Gist API
             GithubApi.getGist(gistId, gist => {
                 if (gist) {
                     this.gist = gist;
@@ -293,7 +301,7 @@
                         }
 
                         // get all markdown files to be parsed
-                        for (var n in gist.files) {
+                        for (let n in gist.files) {
                             if (gist.files[n].language === 'Markdown') {
                                 this.files.markdown.push(gist.files[n]);
                             } else {
@@ -303,9 +311,10 @@
 
                         // parse markdown files
                         if (this.files.markdown.length) {
-                            var html = '';
+                            let html = '';
 
                             try {
+                                // (try to) init markdown-it parser library
                                 var md = window.markdownit({linkify: true});
                             } catch(e) {}
 
@@ -314,6 +323,7 @@
                                 return;
                             }
 
+                            // configure the markdown-it-anchor plugin (for this parser instance)
                             md.use(window.markdownItAnchor, {
                                 level: 1,
                                 permalink: true,
@@ -324,100 +334,114 @@
                                     // use custom slugify function to fix several issues with anchor generation (special chars related)
                                     str = encodeURIComponent(String(str).trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-'));
                                     if (/[0-9]/.test(str[0])) { // ids must not start with a number
-                                        var x = str.split('-', 1);
+                                        const x = str.split('-', 1);
                                         str = str.substring((x[0].length + 1));
                                     }
                                     return str;
                                 }
                             });
 
+                            // render markdown
                             this.files.markdown.forEach(file => {
                                 html += md.render(file.content);
                             });
 
-                            // handle custom embed tags
+                            // replace custom embed tags (Nicegist-specific feature)
                             html = html.replace(/&lt;gist&gt;(.*?)&lt;\/gist&gt;/gi, match => {
-                                var filename = match.replace(/&lt;\/?gist&gt;/g, '');
-                                var height = getIframeHeight(filename);
+                                const filename = match.replace(/&lt;\/?gist&gt;/g, '');
+                                const height = getIframeHeight(filename);
                                 return !height ? match : `<iframe class='embedded-gist' style='height:${height}px' src='https://gist.github.com/${gistId}.pibb?file=${filename}' scrolling='no'></iframe>`;
                             });
 
-                            // write gist content
+                            // write content HTML
                             $contentHolder.innerHTML = html;
 
                             // add author details
                             if (!this.isHomepage) {
-                                var username = !gist.owner ? 'ghost' : gist.owner.login; // when a gist user was deleted, github uses a "ghost" label
-                                var avatar = !gist.owner ? 'https://avatars3.githubusercontent.com/u/10137' : gist.owner.avatar_url;
-                                var gistAuthor = !gist.owner ? `<span class='username'>${username}</span>` : `<a href='${gist.owner.html_url}' class='username'>${username}</a>`;
+                                const username = !gist.owner ? 'ghost' : gist.owner.login; // when a gist user was deleted, github uses a "ghost" label
+                                const avatar = !gist.owner ? 'https://avatars3.githubusercontent.com/u/10137' : gist.owner.avatar_url;
+                                const gistAuthor = !gist.owner ? `<span class='username'>${username}</span>` : `<a href='${gist.owner.html_url}' class='username'>${username}</a>`;
                                 $('#gistAuthor').innerHTML = gistAuthor;
                                 $('#gistPubDate').innerHTML = `<a href='${gist.html_url}'>${gist.created_at}</a>`;
                                 $('#authorAvatar').innerHTML = `<img class='avatar' height='26' width='26' alt='@${username}' src='${avatar}?s=24&amp;v=4'>`;
                                 $('#authorHolder').style.display = 'block';
                             }
 
-                            // add gist comments, if we have
+                            // finally, load comments, if we have some..
                             if (!this.isHomepage && gist.comments > 0) {
                                 this.loadGistComments();
                             } else {
+                                // ..else, finish
                                 this.finish();
                             }
                         } else {
-                            $contentHolder.textContent = 'No markdown files attached to gist ' + gistId;
+                            $contentHolder.textContent = `No markdown files attached to gist ${gistId}.`;
                         }
                     }
                 }
             }, error => {
                 console.warn(error);
                 hideLoadingIndicator();
+
+                // if loading the gist from GitHub API fails, display a helpful error message
                 $titleHolder.textContent = error.msg;
             });
         },
         loadGistComments: function() {
-            var getCommentHTML = (comment, renderedMarkdown) => {
-                var username = !comment.user ? 'ghost' : comment.user.login; // when a gist user was deleted, github uses a "ghost" label
-                var avatar = !comment.user ? 'https://avatars3.githubusercontent.com/u/10137' : comment.user.avatar_url;
-                var commentUsername = !comment.user ? `<span class='username'>${username}</span>` : `<a href='${comment.user.html_url}' class='username'>${username}</a>`;
-                return `<div class='comment-block'>
-                            <div class='comment' id='comment-${comment.id}'>
-                                <div class='comment-block-title'>
-                                    <img class='avatar' height='32' width='32' alt='@${username}' src='${avatar}?s=88&amp;v=4'>
-                                    <div class='comment-block-meta'>
-                                        ${commentUsername}<br>
-                                        commented on <a href='#comment-${comment.id}'><time class='timestamp' datetime='${comment.created_at}'>${comment.created_at}</time></a>
-                                    </div>
-                                </div>
-                                <div class='comment-block-comment'>
-                                    <div class='comment-body'>${renderedMarkdown}</div>
+            const getCommentHTML = (comment, renderedMarkdown) => {
+                const username = !comment.user ? 'ghost' : comment.user.login; // when a gist user was deleted, github uses a "ghost" label
+                const avatar = !comment.user ? 'https://avatars3.githubusercontent.com/u/10137' : comment.user.avatar_url;
+                const commentUsername = !comment.user ? `<span class='username'>${username}</span>` : `<a href='${comment.user.html_url}' class='username'>${username}</a>`;
+                return `
+                    <div class='comment-block'>
+                        <div class='comment' id='comment-${comment.id}'>
+                            <div class='comment-block-title'>
+                                <img class='avatar' height='32' width='32' alt='@${username}' src='${avatar}?s=88&amp;v=4'>
+                                <div class='comment-block-meta'>
+                                    ${commentUsername}<br>
+                                    commented on <a href='#comment-${comment.id}'><time class='timestamp' datetime='${comment.created_at}'>${comment.created_at}</time></a>
                                 </div>
                             </div>
-                        </div>`;
+                            <div class='comment-block-comment'>
+                                <div class='comment-body'>${renderedMarkdown}</div>
+                            </div>
+                        </div>
+                    </div>`;
             };
 
-            var commentsHTML = `
-                    <h2>
-                        <a class='header-anchor' href='#gist-comments' aria-hidden='true'>¶</a>
-                        ${this.gist.comments} ${this.gist.comments > 1 ? 'Comments' : 'Comment'}
-                    </h2>
-                    <p>
-                        <a target='_blank' href='${this.gist.html_url}#partial-timeline-marker'>
-                            Add comment on Gist
-                        </a>
-                    </p>`;
-
+            // (try to) load the comments for the given gist from the GitHub Gist API
             GithubApi.getGistComments(this.gist.id, comments => {
                 if (comments && comments.length) {
-                    // create a new instance, since we don't want to create anchor links within comments
-                    var md = window.markdownit({linkify: true});
+                    let commentsHTML = `
+                        <h2>
+                            <a class='header-anchor' href='#gist-comments' aria-hidden='true'>¶</a>
+                            ${this.gist.comments} ${this.gist.comments > 1 ? 'Comments' : 'Comment'}
+                        </h2>
+                        <p>
+                            <a target='_blank' href='${this.gist.html_url}#partial-timeline-marker'>
+                                Add comment on Gist
+                            </a>
+                        </p>`;
+
+                    // create new markdown-it instance, since
+                    // we don't want to render anchor links within comments
+                    const md = window.markdownit({linkify: true});
+
+                    // render markdown
                     comments.forEach(comment => {
                         commentsHTML += getCommentHTML(comment, md.render(comment.body));
                     });
-                    $('#gist-comments').style.display = 'block';
+
+                    // write comments HTML
                     $('#gist-comments').innerHTML = commentsHTML;
+                    $('#gist-comments').style.display = 'block';
+
+                    // finish
                     this.finish();
                 }
             }, error => {
                 console.warn(error);
+                // fail silently when loading comments and just finish
                 this.finish();
             });
         }
