@@ -129,10 +129,13 @@
         return document.querySelector(selector);
     };
 
-    // simple IE user agent detection
-    const isIE = /Trident|MSIE/.test(window.navigator.userAgent);
+    // simple user agent detection
+    const UA = {
+        isSafari: /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification)),
+        isIE: /*@cc_on!@*/false || !!document.documentMode
+    };
 
-    // smooth anchor scrolling
+    // smooth anchor scrolling for Chrome, Firefox & Opera
     const smoothScrollTo = elem => {
         window.scroll({
             behavior: 'smooth',
@@ -141,7 +144,7 @@
         });
     };
 
-    // not-so-smooth anchor scrolling for IE
+    // not-so-smooth anchor scrolling for IE & Safari
     const jankyScrollTo = (element, to, duration) => {
         if (duration <= 0) return;
         let difference = to - element.scrollTop;
@@ -162,10 +165,13 @@
 
         let elem = $(elemSelector);
         if (elem) {
-            if (!isIE) {
+            if (!UA.isIE && !UA.isSafari) {
                 smoothScrollTo(elem);
             } else {
-                jankyScrollTo(document.documentElement, elem.offsetTop, 600);
+                // when scrolling the content, safari scrolls on the body element
+                // whereas IE scrolls on the html element
+                const root = UA.isSafari ? document.body : document.documentElement;
+                jankyScrollTo(root, elem.offsetTop, 600);
             }
         }
     };
