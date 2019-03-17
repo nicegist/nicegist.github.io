@@ -167,8 +167,7 @@
             if (!isIE) {
                 smoothScrollTo(elem);
             } else {
-                var root = document.documentElement || document.body;
-                jankyScrollTo(root, elem.offsetTop, 600);
+                jankyScrollTo(document.documentElement, elem.offsetTop, 600);
             }
         }
     };
