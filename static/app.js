@@ -13,7 +13,7 @@
                 this.xhr = new window.XMLHttpRequest;
             } else {
                 try {
-                    this.xhr = new ActiveXObject("MSXML2.XMLHTTP.3.0");
+                    this.xhr = new ActiveXObject('MSXML2.XMLHTTP.3.0');
                 } catch (e) {
                     this.xhr = null;
                 }
@@ -23,7 +23,7 @@
             this.getXMLHttpRequest();
 
             if (!this.xhr) {
-                window.console.log("AJAX (XMLHTTP) not supported by your client.");
+                window.console.log('AJAX (XMLHTTP) not supported by your client.');
                 failure({
                     status: 'error',
                     msg: 'AJAX (XMLHTTP) not supported by your client but required for Nicegist to work, sorry.'
@@ -233,9 +233,9 @@
             // open external links in new tab and
             // attach smooth scrolling to internal anchor links
             setTimeout(function() {
-                for (var c = document.getElementsByTagName("a"), i = 0; i < c.length; i++) {
+                for (var c = document.getElementsByTagName('a'), i = 0; i < c.length; i++) {
                     var a = c[i];
-                    if (a.getAttribute("href") && a.hash && a.hash.length && a.hash[0] === '#' && a.hostname === window.location.hostname) {
+                    if (a.getAttribute('href') && a.hash && a.hash.length && a.hash[0] === '#' && a.hostname === window.location.hostname) {
                         a.addEventListener('click', function(e) {
                             e.preventDefault();
                             var elem = e.target.nodeName === 'A' ? e.target : e.target.parentNode;
@@ -244,8 +244,8 @@
                                 window.history.pushState(null, null, elem.hash);
                             }
                         });
-                    } else if (a.getAttribute("href") && a.hostname !== window.location.hostname) {
-                        a.target = "_blank";
+                    } else if (a.getAttribute('href') && a.hostname !== window.location.hostname) {
+                        a.target = '_blank';
                     }
                 }
             }, 500);
@@ -323,7 +323,7 @@
                                 permalinkBefore: true,
                                 slugify: str => {
                                     // use custom slugify function to fix several issues with anchor generation (special chars related)
-                                    str = encodeURIComponent(String(str).trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g,"-"));
+                                    str = encodeURIComponent(String(str).trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-'));
                                     if (/[0-9]/.test(str[0])) { // ids must not start with a number
                                         var x = str.split('-', 1);
                                         str = str.substring((x[0].length + 1));
@@ -340,7 +340,7 @@
                             html = html.replace(/&lt;gist&gt;(.*?)&lt;\/gist&gt;/gi, match => {
                                 var filename = match.replace(/&lt;\/?gist&gt;/g, '');
                                 var height = getIframeHeight(filename);
-                                return !height ? match : `<iframe class="embedded-gist" style="height:${height}px" src="https://gist.github.com/${gistId}.pibb?file=${filename}" scrolling="no"></iframe>`;
+                                return !height ? match : `<iframe class='embedded-gist' style='height:${height}px' src='https://gist.github.com/${gistId}.pibb?file=${filename}' scrolling='no'></iframe>`;
                             });
 
                             // write gist content
@@ -350,10 +350,10 @@
                             if (!this.isHomepage) {
                                 var username = !gist.owner ? 'ghost' : gist.owner.login; // when a gist user was deleted, github uses a "ghost" label
                                 var avatar = !gist.owner ? 'https://avatars3.githubusercontent.com/u/10137' : gist.owner.avatar_url;
-                                var gistAuthor = !gist.owner ? `<span class="username">${username}</span>` : `<a href="${gist.owner.html_url}" class="username">${username}</a>`;
+                                var gistAuthor = !gist.owner ? `<span class='username'>${username}</span>` : `<a href='${gist.owner.html_url}' class='username'>${username}</a>`;
                                 $('#gistAuthor').innerHTML = gistAuthor;
-                                $('#gistPubDate').innerHTML = `<a href="${gist.html_url}">${gist.created_at}</a>`;
-                                $('#authorAvatar').innerHTML = `<img class="avatar" height="26" width="26" alt="@${username}" src="${avatar}?s=24&amp;v=4">`;
+                                $('#gistPubDate').innerHTML = `<a href='${gist.html_url}'>${gist.created_at}</a>`;
+                                $('#authorAvatar').innerHTML = `<img class='avatar' height='26' width='26' alt='@${username}' src='${avatar}?s=24&amp;v=4'>`;
                                 $('#authorHolder').style.display = 'block';
                             }
 
@@ -378,18 +378,18 @@
             var getCommentHTML = (comment, renderedMarkdown) => {
                 var username = !comment.user ? 'ghost' : comment.user.login; // when a gist user was deleted, github uses a "ghost" label
                 var avatar = !comment.user ? 'https://avatars3.githubusercontent.com/u/10137' : comment.user.avatar_url;
-                var commentUsername = !comment.user ? `<span class="username">${username}</span>` : `<a href="${comment.user.html_url}" class="username">${username}</a>`;
-                return `<div class="comment-block">
-                            <div class="comment" id="comment-${comment.id}">
-                                <div class="comment-block-title">
-                                    <img class="avatar" height="32" width="32" alt="@${username}" src="${avatar}?s=88&amp;v=4">
-                                    <div class="comment-block-meta">
+                var commentUsername = !comment.user ? `<span class='username'>${username}</span>` : `<a href='${comment.user.html_url}' class='username'>${username}</a>`;
+                return `<div class='comment-block'>
+                            <div class='comment' id='comment-${comment.id}'>
+                                <div class='comment-block-title'>
+                                    <img class='avatar' height='32' width='32' alt='@${username}' src='${avatar}?s=88&amp;v=4'>
+                                    <div class='comment-block-meta'>
                                         ${commentUsername}<br>
-                                        commented on <a href="#comment-${comment.id}"><time class="timestamp" datetime="${comment.created_at}">${comment.created_at}</time></a>
+                                        commented on <a href='#comment-${comment.id}'><time class='timestamp' datetime='${comment.created_at}'>${comment.created_at}</time></a>
                                     </div>
                                 </div>
-                                <div class="comment-block-comment">
-                                    <div class="comment-body">${renderedMarkdown}</div>
+                                <div class='comment-block-comment'>
+                                    <div class='comment-body'>${renderedMarkdown}</div>
                                 </div>
                             </div>
                         </div>`;
@@ -397,11 +397,11 @@
 
             var commentsHTML = `
                     <h2>
-                        <a class="header-anchor" href="#gist-comments" aria-hidden="true">¶</a>
+                        <a class='header-anchor' href='#gist-comments' aria-hidden='true'>¶</a>
                         ${this.gist.comments} ${this.gist.comments > 1 ? 'Comments' : 'Comment'}
                     </h2>
                     <p>
-                        <a target="_blank" href="${this.gist.html_url}#partial-timeline-marker">
+                        <a target='_blank' href='${this.gist.html_url}#partial-timeline-marker'>
                             Add comment on Gist
                         </a>
                     </p>`;
