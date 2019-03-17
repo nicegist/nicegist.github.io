@@ -332,21 +332,16 @@
                                 }
                             });
 
-                            this.files.markdown.map(file => {
+                            this.files.markdown.forEach(file => {
                                 html += md.render(file.content);
                             });
 
-                            // do we need to embed other gists?
-                            var matches = html.match(/&lt;gist&gt;(.*?)&lt;\/gist&gt;/gi);
-                            if (matches && matches.length) {
-                                matches.map(match => {
-                                    var filename = match.replace('&lt;gist&gt;', '').replace('&lt;/gist&gt;', '');
-                                    var height = getIframeHeight(filename);
-                                    if (height !== false) {
-                                        html = html.replace(match, '<iframe class="embedded-gist" style="height:' + height + 'px" src="https://gist.github.com/' + gistId + '.pibb?file=' + filename + '" scrolling="no"></iframe>');
-                                    }
-                                });
-                            }
+                            // handle custom embed tags
+                            html = html.replace(/&lt;gist&gt;(.*?)&lt;\/gist&gt;/gi, match => {
+                                var filename = match.replace(/&lt;\/?gist&gt;/g, '');
+                                var height = getIframeHeight(filename);
+                                return !height ? match : `<iframe class="embedded-gist" style="height:${height}px" src="https://gist.github.com/${gistId}.pibb?file=${filename}" scrolling="no"></iframe>`;
+                            });
 
                             // write gist content
                             $contentHolder.innerHTML = html;
@@ -415,7 +410,7 @@
                 if (comments && comments.length) {
                     // create a new instance, since we don't want to create anchor links within comments
                     var md = window.markdownit({linkify: true});
-                    comments.map(comment => {
+                    comments.forEach(comment => {
                         commentsHTML += getCommentHTML(comment, md.render(comment.body));
                     });
                     $('#gist-comments').style.display = 'block';
