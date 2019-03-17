@@ -139,7 +139,7 @@
         window.scroll({
             behavior: 'smooth',
             left: 0,
-            top: elem.getBoundingClientRect().top + window.scrollY
+            top: elem.getBoundingClientRect().top + window.pageYOffset
         });
     };
 
