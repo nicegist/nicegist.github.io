@@ -102,7 +102,7 @@ body {
     color: #D872D8;
 }
 
-.light code, .light pre {
+.light :not(.hljs) > code, .light pre:not(.hljs) {
     background-color: #EEE;
     border-color: #AAA;
 }
