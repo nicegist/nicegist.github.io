@@ -132,14 +132,12 @@
         return document.querySelector(selector);
     };
 
-    // simple user agent detection
-    const UA = {
-        isSafari: /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification)),
-        isIE: /*@cc_on!@*/false || !!document.documentMode
-    };
+    // detect support for the behavior property in ScrollOptions
+    const supportsNativeSmoothScroll = 'scrollBehavior' in document.documentElement.style ? true : false;
 
-    // smooth anchor scrolling for Chrome, Firefox & Opera
-    const smoothScrollTo = elem => {
+    // native smooth scrolling for Chrome, Firefox & Opera
+    // @see: https://caniuse.com/#feat=css-scroll-behavior
+    const nativeSmoothScrollTo = elem => {
         window.scroll({
             behavior: 'smooth',
             left: 0,
@@ -147,17 +145,36 @@
         });
     };
 
-    // not-so-smooth anchor scrolling for IE & Safari
-    const jankyScrollTo = (element, to, duration) => {
-        if (duration <= 0) return;
-        let difference = to - element.scrollTop;
-        let perTick = difference / duration * 10;
+    // polyfilled smooth scrolling for IE, Edge & Safari
+    const smoothScrollTo = (to, duration) => {
+        const element = document.scrollingElement || document.documentElement,
+            start = element.scrollTop,
+            change = to - start,
+            startDate = +new Date();
 
-        setTimeout(_ => {
-            element.scrollTop = element.scrollTop + perTick;
-            if (element.scrollTop === to) return;
-            jankyScrollTo(element, to, duration - 10);
-        }, 10);
+        // t = current time
+        // b = start value
+        // c = change in value
+        // d = duration
+        const easeInOutQuad = (t, b, c, d) => {
+            t /= d/2;
+            if (t < 1) return c/2*t*t + b;
+            t--;
+            return -c/2 * (t*(t-2) - 1) + b;
+        };
+
+        const animateScroll = _ => {
+            const currentDate = +new Date();
+            const currentTime = currentDate - startDate;
+            element.scrollTop = parseInt(easeInOutQuad(currentTime, start, change, duration));
+            if(currentTime < duration) {
+                requestAnimationFrame(animateScroll);
+            }
+            else {
+                element.scrollTop = to;
+            }
+        };
+        animateScroll();
     };
 
     // smooth scrolling stub
@@ -168,13 +185,10 @@
 
         let elem = $(elemSelector);
         if (elem) {
-            if (!UA.isIE && !UA.isSafari) {
-                smoothScrollTo(elem);
+            if (supportsNativeSmoothScroll) {
+                nativeSmoothScrollTo(elem);
             } else {
-                // when scrolling the content, safari scrolls on the body element
-                // whereas IE scrolls on the html element
-                const root = UA.isSafari ? document.body : document.documentElement;
-                jankyScrollTo(root, elem.offsetTop, 600);
+                smoothScrollTo(elem.offsetTop, 600);
             }
         }
     };
