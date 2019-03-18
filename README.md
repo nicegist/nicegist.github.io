@@ -55,6 +55,13 @@ Click it when you’re on a gist page, and it will take you to the corresponding
 javascript:(function(){if(location.hostname==="gist.github.com"){var gistId=location.pathname.split("/").pop();if(location.pathname.split("/").length>2&&gistId.length)location.href="https://nicegist.github.io/"+gistId}})();
 ```
 
+## Support
+
+_Nicegist_ uses modern JavaScript and, thus, supports modern browsers only. 
+(Also, IE11 _should_ work. But no warranty.)
+
+If you run into something broken, your markup isn't rendering, or you want to propose a new feature, please [file a ticket](https://github.com/nicegist/nicegist.github.io/issues/new/choose).
+
 ## Under the hood
 
 - [GitHub Gist API](https://developer.github.com/v3/gists/#get-a-single-gist) for fetching gists
