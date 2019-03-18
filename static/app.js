@@ -38,7 +38,7 @@
             this.xhr.timeout = 1500; // time in milliseconds
 
             self.onload = _ => {
-                if (self.status >= 200 && self.status < 400) {
+                if (self.status >= 200 && self.status < 300) {
                     window.console.log(`Successfully called ${requestUrl}.`);
                     try {
                         var json = JSON.parse(self.responseText);
@@ -50,9 +50,12 @@
                 }
                 else {
                     window.console.log(`Error requesting ${requestUrl}. Response Status-Code is ${self.status}.`);
+                    let msg = self.status === 404
+                        ? 'Invalid id? Gist API said "not found".'
+                        : `Error when fetching Gist. Gist API returned a ${self.status} response code.`
                     failure({
                         status: 'error',
-                        msg: `Error when fetching Gist. Gist API returned a ${self.status} response code.`
+                        msg: msg
                     });
                 }
             }
@@ -60,7 +63,7 @@
                 window.console.log(`There was an error (of some sort) connecting to ${requestUrl}.`);
                 failure({
                     status: 'error',
-                    msg: 'Error when fetching Gist.'
+                    msg: 'Error when fetching Gist. Please try to reload.'
                 });
             };
             self.ontimeout = _ => {
@@ -73,30 +76,30 @@
                                 if (response.components[i].id === 'brv1bkgrwx7q' && response.components[i].status !== 'operational') {
                                     failure({
                                         status: 'error',
-                                        msg: 'The GitHub API is currently not fully operational. Sorry, but nothing we can do right now.'
+                                        msg: 'The GitHub API is currently not fully operational. Sorry, but nothing we can do right now. Please check back later.'
                                     });
                                 }
                             }
                             failure({
                                 status: 'error',
-                                msg: 'API timeout error when fetching Gist.'
+                                msg: 'API timeout error when fetching Gist. Please try to reload.'
                             });
                         } else {
                             failure({
                                 status: 'error',
-                                msg: 'API timeout error when fetching Gist.'
+                                msg: 'API timeout error when fetching Gist. Please try to reload.'
                             });
                         }
                     }, error => {
                         failure({
                             status: 'error',
-                            msg: 'API timeout error when fetching Gist.'
+                            msg: 'API timeout error when fetching Gist. Please try to reload.'
                         });
                     });
                 } else {
                     failure({
                         status: 'error',
-                        msg: 'API timeout error when fetching Gist AND when fetching the GitHub API status. Sorry, but nothing we can do right now.'
+                        msg: 'API timeout error when fetching Gist AND when fetching the GitHub API status. Please try to reload or check back later.'
                     });
                 }
             };
