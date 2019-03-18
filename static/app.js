@@ -331,11 +331,13 @@
                                 permalinkSymbol: '¶',
                                 permalinkBefore: true,
                                 slugify: str => {
-                                    // use custom slugify function to fix several issues with anchor generation (special chars related)
+                                    // use custom slugify function, which reassembles the GitHub way of creating anchors
                                     str = encodeURIComponent(String(str).trim().toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-'));
                                     if (/[0-9]/.test(str[0])) { // ids must not start with a number
-                                        const x = str.split('-', 1);
-                                        str = str.substring((x[0].length + 1));
+                                        str = str.substring((str.split('-', 1)[0].length + 1));
+                                    }
+                                    if (str.substr(-1) === '-') { // ids must not end with a dash ("-")
+                                        str = str.slice(0, -1);
                                     }
                                     return str;
                                 }
