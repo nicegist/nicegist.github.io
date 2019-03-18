@@ -498,3 +498,8 @@ article {
     content: "";
     display: table;
 }
+
+.hljs {
+  white-space: pre;
+  word-wrap: normal;
+}
