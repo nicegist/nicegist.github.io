@@ -500,6 +500,11 @@ article {
 }
 
 .hljs {
-  white-space: pre;
-  word-wrap: normal;
+    white-space: pre;
+    word-wrap: normal;
+}
+
+ul.contains-task-list {
+    list-style-type: none;
+    margin-left: 0;
 }
