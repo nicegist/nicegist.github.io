@@ -360,6 +360,8 @@
                                 }
                             });
 
+                            md.use(window.markdownitTaskLists, {enabled: true});
+
                             // render markdown
                             this.files.markdown.forEach(file => {
                                 html += md.render(file.content);
