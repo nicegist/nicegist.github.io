@@ -305,6 +305,10 @@ ol, ul {
     margin-left: 1.296rem;
 }
 
+ol ol, ul ul {
+    margin-bottom: 0;
+}
+
 code, pre {
     border: 1px solid;
     border-radius: 2px;
