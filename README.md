@@ -17,6 +17,7 @@ I liked the idea. Thus, _Nicegist_ was born.
 - 💥 Supports gist embedding (use `<gist>` tags, i.e. `<gist>file.sh</gist>`)
 - Supports public and secret gists
 - Supports CommonMark / GFM syntax
+- Supports GFM task lists
 - Automatic code block syntax highlighting
 - Automatic headline anchors
 
@@ -33,18 +34,19 @@ _(It's a longish alpha-numberic string like `dab5cf7977008e504213`.)_
 - Tables: [Nicegist](https://nicegist.github.io/79b95b862ca276c0748c9bab90a758e0), [Source](https://gist.github.com/eyecatchup/79b95b862ca276c0748c9bab90a758e0)
 - 💥 Embedded gists: [Nicegist](https://nicegist.github.io/3382937), [Source](https://gist.github.com/surma/3382937)
 - 💥 Embedded interactive map: [Nicegist](https://nicegist.github.io/39e869f768a34ae3e8c4b81f733bfe42), [Source](https://gist.github.com/eyecatchup/39e869f768a34ae3e8c4b81f733bfe42)
+- GFM task list: [Nicegist](https://nicegist.github.io/1b3041b19870ff91730e550fa5cd129c), [Source](https://gist.github.com/eyecatchup/1b3041b19870ff91730e550fa5cd129c)
 - Text formatting, images & more: [Nicegist](https://nicegist.github.io/96e67c2dd38419b200f9efcd56c2e8e3), [Source](https://gist.github.com/eyecatchup/96e67c2dd38419b200f9efcd56c2e8e3)
 - Example writeup: [Nicegist](https://nicegist.github.io/dab5cf7977008e504213), [Source](https://gist.github.com/eyecatchup/dab5cf7977008e504213)
 
 ### Content
 
-The Gist's description field will be used as the title for your writing. You should structure your writing such that the highest-level heading is an H2, as the post title will be a first-level heading. 
+The Gist's description field will be used as the title for your writing. You should structure your writing such that the highest-level heading is an H2, as the post title will be a first-level heading.
 
 Your Markdown file(s) can contain relative links to anchors, which _Nicegist_ will automatically create for each heading in your Markdown file(s).
 
 You can also embed other files from your Gist in your Markdown file(s). _Nicegist_ supports custom `<gist>` tags. Let's say your Gist contains two files. A `example.md` and a `code.sh`. You could then use the custom embed tag in your `example.md` as follows: `<gist>code.sh</gist>`. _Nicegist_ will render these tags like in [this example](https://nicegist.github.io/3382937).
 
-Check out the [examples](#examples) above for more clues on what you can and should do when writing for _Nicegist_. 
+Check out the [examples](#examples) above for more clues on what you can and should do when writing for _Nicegist_.
 
 ### Bookmarklet
 
@@ -57,7 +59,7 @@ javascript:(function(){if(location.hostname==="gist.github.com"){var gistId=loca
 
 ## Support
 
-_Nicegist_ uses modern JavaScript and, thus, supports modern browsers only. 
+_Nicegist_ uses modern JavaScript and, thus, supports modern browsers only.
 (Also, IE11 _should_ work. But no warranty.)
 
 If you run into something broken, your markup isn't rendering, or you want to propose a new feature, please [file a ticket](https://github.com/nicegist/nicegist.github.io/issues/new/choose).
@@ -68,6 +70,7 @@ If you run into something broken, your markup isn't rendering, or you want to pr
 - [Chromium destilled webpage layout](https://chromium.googlesource.com/chromium/src/+/refs/heads/master/components/dom_distiller/) for optimized reading experience
 - [markdown-it](https://github.com/markdown-it/markdown-it) for Markdown parsing
 - [markdown-it-anchor](https://github.com/valeriangalliat/markdown-it-anchor) for automated header anchors
+- [markdown-it-task-list](https://github.com/revin/markdown-it-task-lists) for GFM task list support
 - [highlight.js](https://highlightjs.org/) for code block syntax highlighting
 - Some regex sugar and a hidden gist feature for gist embedding
 - [GitHub Pages SPA hack](http://www.backalleycoder.com/2016/05/13/sghpa-the-single-page-app-hack-for-github-pages/) for pretty URLs
