@@ -332,7 +332,7 @@
 
                             try {
                                 // (try to) init markdown-it parser library
-                                var md = window.markdownit({linkify: true});
+                                var md = window.markdownit({html: true, linkify: true});
                             } catch(e) {}
 
                             if (!md) {
