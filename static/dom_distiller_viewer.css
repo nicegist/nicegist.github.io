@@ -512,3 +512,11 @@ ul.contains-task-list {
     list-style-type: none;
     margin-left: 0;
 }
+
+ul.contains-task-list ul {
+    margin-left: 2.7rem !important;
+}
+
+ul.contains-task-list ul.contains-task-list {
+    margin-left: 1rem !important;
+}
